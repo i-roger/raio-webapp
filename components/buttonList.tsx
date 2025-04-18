@@ -7,8 +7,8 @@ interface btnListProps {
 
 export default function buttonList({NameBtn, Page}: btnListProps) {
     return(
-        <Link className="bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition" href={Page}>
-            <p className="active:bg-red-400"> {NameBtn} teste</p>
+        <Link className="bg-blue-500 text-center text-white font-semibold py-2 px-4 rounded-md active:opacity-50 transition" href={Page}>
+            <p className=""> {NameBtn}</p>
         </Link>
     )
 }
