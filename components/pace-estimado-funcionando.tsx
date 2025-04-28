@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 export default function SpeedCalculator() {
   const [distance, setDistance] = useState('')
+  const [unit, setUnit] = useState<'km' | 'm'>('km')
   const [hours, setHours] = useState('')
   const [minutes, setMinutes] = useState('')
   const [seconds, setSeconds] = useState('')
@@ -29,7 +30,7 @@ export default function SpeedCalculator() {
       return
     }
 
-    const distanceKm = dist / 1000
+    const distanceKm = unit === 'km' ? dist : dist / 1000
 
     const secondsPerKm = totalSeconds / distanceKm
     const paceMinutes = Math.floor(secondsPerKm / 60)
@@ -40,11 +41,11 @@ export default function SpeedCalculator() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-zinc-800 rounded-2xl shadow-md space-y-6 text-white">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-zinc-800 rounded-2xl shadow-md space-y-6">
       <h2 className="text-2xl font-semibold text-center">Pace Estimado</h2>
 
       <div>
-        <label className="block mb-1 font-medium">Distância (10,000 = 10km ou 0,400 = 400m)</label>
+        <label className="block mb-1 font-medium">Distância ({unit})</label>
         <input
           type="text"
           inputMode="numeric"
@@ -53,6 +54,30 @@ export default function SpeedCalculator() {
           placeholder="Ex: 10,000"
           className="w-full p-2 border rounded-md"
         />
+        <div className="mt-2 space-x-2">
+          <label>
+            <input
+              type="radio"
+              name="unit"
+              value="km"
+              checked={unit === 'km'}
+              onChange={() => setUnit('km')}
+              className="mr-1"
+            />
+            km
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="unit"
+              value="m"
+              checked={unit === 'm'}
+              onChange={() => setUnit('m')}
+              className="mr-1"
+            />
+            m
+          </label>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
