@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import TabBar from "../components/tabbar";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,12 +29,14 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en">
+    <html lang="pt-br">
+      
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <TabBar/>
+        <SpeedInsights/>
       </body>
     </html>
   );

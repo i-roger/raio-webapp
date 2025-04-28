@@ -1,9 +1,9 @@
-interface cardFaqProps {
+interface cardBtnProps {
     titulo: string;
     texto: string;
 }
 
-export default function CardFaq ({titulo, texto} : cardFaqProps) {
+export default function CardFaq ({titulo, texto} : cardBtnProps) {
     return(
         <div className='flex flex-col gap-4 m-2 p-4 bg-zinc-800 rounded-xl'>
             <div className='flex flex-col gap-2'>

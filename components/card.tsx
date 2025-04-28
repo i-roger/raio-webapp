@@ -1,19 +1,21 @@
-import Button from "./buttonList";
-
 interface cardBtnProps {
     titulo: string;
     texto: string;
     href: string;
+    namebtn: string;
 }
 
-export default function CardFaq ({titulo, texto, href} : cardBtnProps) {
+export default function CardFaq ({titulo, texto, href, namebtn} : cardBtnProps) {
     return(
         <div className='flex flex-col gap-4 m-2 p-4 bg-zinc-800 rounded-xl'>
             <div className='flex flex-col gap-2'>
                 <h1 className='text-[20px] font-semibold text-white'>{titulo}</h1>
                 <p className='text-zinc-500 text-start'>{texto}</p>
             </div>
-                <Button NameBtn='Instagram' Page={href} />
+                <a className="flex justify-center items-center px-2 py-4 bg-blue-500 text-white font-semibold rounded-md active:opacity-50 transition" 
+                href={href}>
+                    {namebtn}
+                </a>
         </div>
     )
 }

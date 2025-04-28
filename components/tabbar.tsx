@@ -10,6 +10,8 @@ import { IoIosSwap, IoIosHome, IoIosCalculator, IoIosFlash } from "react-icons/i
 export default function TabBar() {
     const pathname = usePathname();
 
+
+
     const navLinks = [
         { name: "Inicio", href:"/inicio", icon: <IoIosHome size={24}/>},
         { name: "Calculadoras", href:"/calculadoras", icon: <IoIosCalculator size={24}/>},
@@ -17,6 +19,7 @@ export default function TabBar() {
         { name: "Sobre", href:"/sobre", icon: <IoIosFlash size={24}/>},
       ]
     return(
+      <>
         <div className="fixed flex justify-center gap-4 bottom-0 w-full bg-zinc-800">
         {navLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
@@ -31,5 +34,6 @@ export default function TabBar() {
           )
         })}
         </div>
+        </>
     )
 }

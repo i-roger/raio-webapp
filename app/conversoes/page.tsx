@@ -1,29 +1,11 @@
-import Link from 'next/link';
+import Button from "../../components/btn-list";
 
 export default function PaceParaKmh() {
     return(
         <section>
-        <div className="flex justify-center">
-            <h1>Conversões</h1>
-        </div>
-        <div className="flex flex-wrap m-20 gap-10 justify-center bg-blue-200">
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-            <Link className="bg-red-200" href="/pace-para-kmh">Pace para Kmh</Link>
-        </div>
+            <div className="flex flex-wrap mt-10 mb-20 gap-4 justify-around ">
+                <Button NameBtn="Pace para Km/h" Page="conversoes/pace-para-kmh"/>
+            </div>
         </section>
     )
 }

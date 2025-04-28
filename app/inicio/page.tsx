@@ -1,5 +1,5 @@
 import '../globals.css';
-import Button from "../../components/buttonList"
+import Button from "../../components/btn"
 
 export default function Home() {
   return (

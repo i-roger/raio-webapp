@@ -39,6 +39,17 @@ export default function SpeedCalculator() {
     setPace(paceFormatted)
   }
 
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        alert('Texto copiado com sucesso!')
+      })
+      .catch(() => {
+        alert('Erro ao copiar o texto.')
+      })
+  }
+
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-zinc-800 rounded-2xl shadow-md space-y-6 text-white">
       <h2 className="text-2xl font-semibold text-center">Pace Estimado</h2>
@@ -99,7 +110,7 @@ export default function SpeedCalculator() {
       </button>
 
       {pace && (
-        <div className="bg-gray-100 p-4 rounded-md text-center">
+        <div onClick={() => handleCopy(pace)} className="bg-gray-100 p-4 rounded-md text-center">
           <p className="font-medium text-gray-700">Seu Pace Médio:</p>
           <p className="text-2xl font-semibold text-green-600">{pace}</p>
         </div>
