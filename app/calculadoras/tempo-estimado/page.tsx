@@ -10,7 +10,7 @@ export default function EstimatedTimeCalculator() {
   const handleDistanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '')
     const formatted = raw.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    setDistance(formatted)
+    if (formatted.length <= 6) setDistance(formatted)
   }
 
   const parseToFloat = (val: string) => parseFloat(val.replace(',', '')) || 0

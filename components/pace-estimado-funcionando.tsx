@@ -4,7 +4,6 @@ import { useState } from 'react'
 
 export default function SpeedCalculator() {
   const [distance, setDistance] = useState('')
-  const [unit, setUnit] = useState<'km' | 'm'>('km')
   const [hours, setHours] = useState('')
   const [minutes, setMinutes] = useState('')
   const [seconds, setSeconds] = useState('')
@@ -15,6 +14,7 @@ export default function SpeedCalculator() {
     const formatted = raw.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     setDistance(formatted)
   }
+
 
   const parseToFloat = (val: string) => parseFloat(val.replace(',', '')) || 0
 
@@ -86,7 +86,8 @@ export default function SpeedCalculator() {
           <input
             type="number"
             value={hours}
-            onChange={(e) => setHours(e.target.value)}
+            onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+              if (val.length <= 2) setHours(val)}}
             className="w-full p-2 border rounded-md"
             placeholder="0"
             min="0"

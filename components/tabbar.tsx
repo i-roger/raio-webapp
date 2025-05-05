@@ -20,16 +20,16 @@ export default function TabBar() {
       ]
     return(
       <>
-        <div className="fixed flex justify-center gap-4 bottom-0 w-full bg-zinc-800">
+        <div className="fixed flex justify-center gap-6 bottom-0 w-full bg-zinc-800 p-4 rounded-t-4xl drop-shadow-2xl shadow-2xl shadow-black drop-shadow-black">
         {navLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
 
           return(
             <Link href={link.href} key={link.name}
-            className={`flex flex-col items-center p-2
-            ${isActive ? "transition duration-700 text-blue-500" : "text-zinc-400"}`}>
-              {link.icon}
-              <p className={isActive ? "transition duration-700" : ""}>{link.name}</p>
+            className={`flex flex-col items-center
+            ${isActive ? "text-orange-500" : "text-zinc-400"}`}>
+              <p className={isActive? "transition duration-400" : ""}>{link.icon}</p>
+              <p className={isActive ? "transition duration-400" : ""}>{link.name}</p>
             </Link>
           )
         })}
