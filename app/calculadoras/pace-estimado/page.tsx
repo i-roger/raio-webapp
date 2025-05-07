@@ -63,7 +63,7 @@ export default function PaceEstimado() {
             type="number"
             value={hours}
             maxLength={2}
-            onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+            onChange={(e) => {const val = e.target.value.replace(/\D/g, '')
               if (val.length <= 2) setHours(val)}}
             className="w-full p-2 border rounded-md"
             placeholder="0"
@@ -76,7 +76,7 @@ export default function PaceEstimado() {
             type="number"
             value={minutes}
             maxLength={2}
-            onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+            onChange={(e) => {const val = e.target.value.replace(/\D/g, '')
                 if (val.length <= 2) setMinutes(val)}}
             className="w-full p-2 border rounded-md"
             placeholder="0"
@@ -88,7 +88,7 @@ export default function PaceEstimado() {
           <input
             type="number"
             value={seconds}
-            onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+            onChange={(e) => {const val = e.target.value.replace(/\D/g, '')
                 if (val.length <= 2) setSeconds(val)}}
             className="w-full p-2 border rounded-md"
             placeholder="0"

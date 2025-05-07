@@ -16,7 +16,7 @@ export default function EstimatedTimeCalculator() {
   const parseToFloat = (val: string) => parseFloat(val.replace(',', '')) || 0
 
   const handlePaceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '') // Remove tudo que não for número
+    let value = e.target.value.replace(/\D/g, '')
 
     if (value.length > 4) value = value.slice(0, 4) // Limita no máximo 4 dígitos
 

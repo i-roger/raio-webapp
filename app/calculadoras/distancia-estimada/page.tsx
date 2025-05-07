@@ -52,7 +52,7 @@ export default function EstimatedDistanceCalculator() {
             <input
               type="number"
               value={hours}
-              onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+              onChange={(e) => {const val = e.target.value.replace(/\D/g, '')
                 if (val.length <= 2) setHours(val)}}
               className="w-full p-2 border rounded-md"
               placeholder="0"
@@ -64,7 +64,7 @@ export default function EstimatedDistanceCalculator() {
             <input
               type="number"
               value={minutes}
-              onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+              onChange={(e) => {const val = e.target.value.replace(/\D/g, '')
                 if (val.length <= 2) setMinutes(val)}}
               className="w-full p-2 border rounded-md"
               placeholder="0"
@@ -76,7 +76,7 @@ export default function EstimatedDistanceCalculator() {
             <input
               type="number"
               value={seconds}
-              onChange={(e) => {const val = e.target.value.replace(/\D/g, '') // remove não números
+              onChange={(e) => {const val = e.target.value.replace(/\D/g, '')
                 if (val.length <= 2) setSeconds(val)}}
               className="w-full p-2 border rounded-md"
               placeholder="0"
