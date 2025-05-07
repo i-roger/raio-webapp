@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-import TabBar from "../components/tabbar";
-
 import { SpeedInsights } from "@vercel/speed-insights/next";
+
+
+import PopupModalDonation from "../components/PopupModalDonation";
+import TabBar from "../components/tabbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,8 @@ export default function RootLayout({
         {children}
         <TabBar/>
         <SpeedInsights/>
+        <PopupModalDonation/>
+
       </body>
     </html>
   );

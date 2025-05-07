@@ -6,10 +6,6 @@ interface cardBtnProps {
     cor: string;
 }
 
-const cor = [
-    {laranja: 'bg-orange-500'}
-]
-
 export default function CardFaq ({titulo, texto, href, namebtn, cor} : cardBtnProps) {
     return(
         <div className='flex flex-col gap-4 m-2 p-4 bg-zinc-800 rounded-xl'>
