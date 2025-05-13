@@ -7,10 +7,9 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center mb-20">
 {/* Anuncios */}
-      <div className="bg-gray-700 p-4 m-2 h-36 rounded-xl">
+      {/* <div className="bg-gray-700 p-4 m-2 h-36 rounded-xl">
         <h1 className='text-[20px] font-semibold text-white'>Google Adsense</h1>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8817598114486469" crossOrigin="anonymous"></script>
-      </div>
+      </div> */}
 {/* Anuncios */}
 
       <div className='flex flex-col gap-4 m-2 p-4 bg-zinc-800 rounded-xl'>
