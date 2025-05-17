@@ -26,6 +26,7 @@ export default function App() {
         }}
         pagination={{
           dynamicBullets:true,
+          
         }}
         modules={[Autoplay, Pagination]}
         className="mySwiper"
