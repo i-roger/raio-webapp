@@ -8,8 +8,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import './styles.css'
 
-import Card from '../../components/card';
-import Button from '../../components/btn';
+import Card from './card-carousel';
 
 // import required modules
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
@@ -20,24 +19,19 @@ export default function App() {
       <Swiper
         slidesPerView={1}
         spaceBetween={30}
-        loop={false}
+        loop={true}
         autoplay={{
           delay:2500,
           disableOnInteraction:false
         }}
-        modules={[Autoplay]}
+        pagination={{
+          dynamicBullets:true,
+        }}
+        modules={[Autoplay, Pagination]}
         className="mySwiper"
       >
-        
         <SwiperSlide>
-          <div className='flex flex-col gap-4 p-4 bg-zinc-800 rounded-xl'>
-                  <div className='flex flex-col gap-2'>
-                    <h1 className='text-[20px] font-semibold text-white'>Raiolaranja : Seu companheiro nas corridas!</h1>
-                    <p className='text-zinc-400 text-start'>Desenvolvi esse app para ajudar a todos os corredores que desejam planejar melhor seus treinos, seja na esteira ou na rua.</p>
-                    <p className='text-zinc-400 text-start'>Clique no botão abaixo e fale diretamente comigo no Instagram!</p>
-                  </div>
-                  <Button cor='bg-orange-500' name='Instagram' page='https://www.instagram.com/raiolaranja/' />
-                </div>
+          <Card cor='bg-orange-500' titulo='Raiolaranja : Seu companheiro nas corridas!' texto='Desenvolvi esse app para ajudar a todos os corredores que desejam planejar melhor seus treinos, seja na esteira ou na rua.' namebtn='Instagram!' href='https://www.instagram.com/raiolaranja/'/>
         </SwiperSlide>
 
         <SwiperSlide>
@@ -47,8 +41,8 @@ export default function App() {
         <SwiperSlide>
           <Card cor='bg-red-500' titulo='Perguntas frequentes' texto='Se você tem dúvidas sobre como utilizar as ferramentas clique no botão abaixo e será redirecionado para o FAQ.' namebtn='FAQ' href='/sobre'/>
         </SwiperSlide>
-
       </Swiper>
+      
     </div>
   );
 }

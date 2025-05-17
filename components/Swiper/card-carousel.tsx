@@ -6,9 +6,9 @@ interface cardBtnProps {
     cor: string;
 }
 
-export default function Card ({titulo, texto, href, namebtn, cor} : cardBtnProps) {
+export default function CardCarousel ({titulo, texto, href, namebtn, cor} : cardBtnProps) {
     return(
-        <div className='flex flex-col gap-4 m-2 p-4 bg-zinc-800 rounded-xl'>
+        <div className='flex flex-col gap-4 p-4 h-[250px] bg-zinc-800 rounded-xl justify-center'>
             <div className='flex flex-col gap-2'>
                 <h1 className='text-[20px] font-semibold text-white'>{titulo}</h1>
                 <p className='text-zinc-400 text-start'>{texto}</p>
