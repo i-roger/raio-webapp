@@ -1,5 +1,6 @@
 import Card from "../../components/card";
 import CardFaq from "../../components/card-faq";
+import Accordion from "../../components/accordion";
 
 export default function PaceParaKmh() {
     return(
@@ -11,11 +12,11 @@ export default function PaceParaKmh() {
             namebtn="📨 Clique aqui! 📨"
             href='https://www.instagram.com/raiolaranja/'/>
 
-            <CardFaq titulo='Como faço para descobrir o pace em metros ?' 
-            texto='Na aba de Calculadoras basta clicar em Pace Estimado e digitar a distância em metros. Exemplo: 10,000 = 10KM | 0,400 = 400M' />
-
-            <CardFaq titulo='Quero correr a 60% da minha velocidade, onde posso saber o pace certo?' 
-            texto='Na aba de Calculadoras basta clicar em Intensidade de Corrida, digitar o seu pace de prova e a procentagem que deseja. Será mostrado na tela o pace para a porcentagem desejada.' />
+            <div className="flex flex-col">
+                <h1 className="text-xl text-white text-center font-semibold">Perguntas e respostas mais frequentes</h1>
+                <Accordion title='Como faço para descobrir o pace em metros ?' content='Na aba de Calculadoras basta clicar em Pace Estimado e digitar a distância em metros. Exemplo: 10,000 = 10KM | 0,400 = 400M' />
+                <Accordion title='Quero correr a 60% da minha velocidade, onde posso saber o pace certo?' content='Na aba de Calculadoras basta clicar em Intensidade de Corrida, digitar o seu pace de prova e a procentagem que deseja. Será mostrado na tela o pace para a porcentagem desejada.'/>
+            </div>
         </div>
     )
 }
