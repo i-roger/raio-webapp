@@ -1,6 +1,6 @@
 import Button from "../../components/btn-list";
 
-export default function PaceParaKmh() {
+export default function Calculadoras() {
     return(
         <section>
             {/* Anuncios */}

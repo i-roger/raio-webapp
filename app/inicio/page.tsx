@@ -5,7 +5,7 @@ import Card from "../../components/card"
 
 import Swiper from "../../components/Swiper/SwiperComponent";
 
-export default function Home() {
+export default function Inicio() {
   return (
     <div className="flex flex-col justify-center mb-20">
       <Swiper/>
