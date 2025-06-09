@@ -36,7 +36,7 @@ export default function RootLayout({
         <meta name="google-adsense-account" content="ca-pub-8817598114486469"/>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <TabBar/>

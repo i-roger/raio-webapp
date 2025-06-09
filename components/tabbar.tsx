@@ -20,7 +20,7 @@ export default function TabBar() {
       ]
     return(
       <>
-        <div className="fixed flex justify-center gap-6 bottom-0 w-full bg-zinc-800 p-4 rounded-t-4xl drop-shadow-2xl shadow-2xl shadow-black drop-shadow-black">
+        <div className="z-1 fixed flex justify-center gap-6 bottom-0 w-full bg-zinc-800 p-4 rounded-t-4xl drop-shadow-2xl shadow-2xl shadow-black drop-shadow-black">
         {navLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
 

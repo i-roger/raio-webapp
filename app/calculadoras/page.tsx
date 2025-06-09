@@ -1,14 +1,16 @@
 import Button from "../../components/btn-list";
+import Advertisement from "../../components/Swiper/Advertisement";
 
 export default function Calculadoras() {
     return(
-        <section>
+        <section className="flex flex-col mb-20">
             {/* Anuncios */}
             {/* <div className="bg-gray-700 p-4 m-2 h-36 rounded-xl">
                 <h1 className='text-[20px] font-semibold text-white'>Google Adsense</h1>
                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8817598114486469" crossOrigin="anonymous"></script>
             </div> */}
             {/* Anuncios */}
+            <Advertisement/>
             <div className="flex flex-wrap mt-10 mb-20 gap-x-10 gap-y-7 justify-center">
                 <Button NameBtn="Pace Estimado" Page="calculadoras/pace-estimado"/>
                 <Button NameBtn="Tempo Estimado" Page="calculadoras/tempo-estimado"/>
