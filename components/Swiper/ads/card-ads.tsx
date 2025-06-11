@@ -9,7 +9,7 @@ interface cardBtnProps {
 
 export default function CardCarousel ({titulo, texto, href, namebtn, corbtn, corcard} : cardBtnProps) {
     return(
-        <div className={`flex flex-col gap-4 p-4 w-full h-[250px] ${corcard} rounded-xl justify-center`}>
+        <div className={`flex flex-col gap-4 p-4 w-full h-[200px] ${corcard} rounded-xl justify-center`}>
             <div className='flex flex-col gap-2'>
                 <h1 className='text-[20px] font-semibold text-white'>{titulo}</h1>
                 <p className='text-zinc-400 text-justify'>{texto}</p>

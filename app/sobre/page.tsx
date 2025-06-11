@@ -1,11 +1,12 @@
 import Card from "../../components/card";
 import CardFaq from "../../components/card-faq";
 import Accordion from "../../components/accordion";
+import Advertisement from "../../components/Swiper/ads/Advertisement"
 
 export default function Sobre() {
     return(
         <div className="flex flex-col justify-center mb-20">
-
+            <Advertisement/>
             <div className="flex flex-col m-2">
                 <h1 className="text-2xl text-white text-center font-semibold m-2 mb-5">Perguntas e respostas mais frequentes</h1>
                 <Accordion title='Como faço para descobrir o pace em metros ?' content='Na aba de Calculadoras basta clicar em Pace Estimado e digitar a distância em metros. Exemplo: 10,000 = 10KM | 0,400 = 400M' />
