@@ -1,4 +1,1 @@
-Carousel feito com SWIPER
--> npm install swiper
--> npm i framer-motion // Animações
-Accordion.tsx -- usado para mostrar os textos ao clicar nos titulos
+Raio Laranja: Desenvolvi esse app para ajudar a todos os corredores que desejam planejar melhor seus treinos, seja na esteira ou na rua.
