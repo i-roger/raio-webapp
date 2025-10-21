@@ -8,6 +8,8 @@ import React from 'react';
 import PopupModalDonation from "../components/PopupModalDonation";
 import TabBar from "../components/tabbar";
 
+import { Analytics } from "@vercel/analytics/next"
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -42,6 +44,7 @@ export default function RootLayout({
         <TabBar/>
         <SpeedInsights/>
         <PopupModalDonation/>
+        <Analytics/>
 
       </body>
     </html>
