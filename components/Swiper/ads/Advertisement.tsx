@@ -39,7 +39,7 @@ export default function App() {
         </SwiperSlide>
 
         <SwiperSlide>
-          <Card corcard='bg-zinc-800' corbtn='bg-orange-500' titulo='📣 Seu produto, sua mensagem, no lugar certo!' texto='Entre em contato e garanta seu espaço!' namebtn='Clique Aqui!' href='https://www.instagram.com/raiolaranja/'/>
+          <Card corcard='bg-zinc-800' corbtn='bg-orange-500' titulo='📣 Seu produto, sua mensagem, no lugar certo!' texto='Entre em contato e garanta seu espaço!' namebtn='Clique Aqui!' href='/contato'/>
         </SwiperSlide>
       </Swiper>
       

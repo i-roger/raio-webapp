@@ -18,7 +18,7 @@ export default function Sobre() {
             titulo='Sua dúvida não foi solucionada?' 
             texto='Entre em contato através do instagram, que estarei ajudando o mais rápido possível!'
             namebtn="📨 Clique aqui! 📨"
-            href='https://www.instagram.com/raiolaranja/'/>
+            href='/contato'/>
         </div>
     )
 }
