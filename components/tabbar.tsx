@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-import { IoIosSwap, IoIosHome, IoIosCalculator, IoIosFlash } from "react-icons/io";
+import { IoIosSwap, IoIosHome, IoIosCalculator, IoIosFlash, IoIosHelpCircleOutline } from "react-icons/io";
 
 
 
@@ -14,8 +14,8 @@ export default function TabBar() {
 
     const navLinks = [
         { name: "Inicio", href:"/inicio", icon: <IoIosHome size={24}/>},
-        { name: "Calculadoras", href:"/calculadoras", icon: <IoIosCalculator size={24}/>},
-        { name: "Conversões", href:"/conversoes", icon: <IoIosSwap size={24}/>},
+        { name: "Ferramentas", href:"/ferramentas", icon: <IoIosCalculator size={24}/>},
+        { name: "Contato", href:"/contato", icon: <IoIosHelpCircleOutline size={24}/>},
         { name: "Sobre", href:"/sobre", icon: <IoIosFlash size={24}/>},
       ]
     return(

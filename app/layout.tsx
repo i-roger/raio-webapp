@@ -40,7 +40,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="">
         {children}
+        </div>
         <TabBar/>
         <SpeedInsights/>
         <PopupModalDonation/>

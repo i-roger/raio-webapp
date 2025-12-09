@@ -13,7 +13,7 @@ import Card from './card-carousel';
 // import required modules
 import { Pagination, Autoplay } from 'swiper/modules';
 
-export default function App() {
+export default function SwiperComponent() {
   return (
     <div className='m-2'>
       <Swiper

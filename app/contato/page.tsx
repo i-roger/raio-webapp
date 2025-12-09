@@ -23,13 +23,13 @@ export default function Contato() {
 
   return (
     <div className="flex items-center justify-center flex-col">
-      <h1 className="text-center font-semibold text-white text-[28px] my-2">
+      <h1 className="m-4 text-center font-semibold text-white text-[28px]">
         Formulário de Contato
       </h1>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col justify-center w-full text-[20px] text-white px-4"
+        className="flex flex-col justify-center text-[16px] md:text-[20px] text-white px-4 w-full md:w-[700px]"
       >
         <label htmlFor="name">Nome</label>
         <input
