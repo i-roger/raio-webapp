@@ -1,1 +1,1 @@
-Raio Laranja: Desenvolvi esse app para ajudar a todos os corredores que desejam planejar melhor seus treinos, seja na esteira ou na rua.
+<img width="1196" height="284" src="https://github.com/user-attachments/assets/8b2fb2b5-4493-407c-9735-2c3967499af3" />
