@@ -2,13 +2,17 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Calculator, ArrowLeftRight, Zap } from "lucide-react"
-import { ThemeToggle } from "@/components/theme"
+import { Home, Calculator, ArrowLeftRight, Zap, Heart, Info, Settings } from "lucide-react"
 
 const links = [
   { href: "/", label: "Início", icon: Home },
   { href: "/calculadoras", label: "Calculadoras", icon: Calculator },
   { href: "/conversoes", label: "Conversões", icon: ArrowLeftRight },
+]
+
+const extraLinks = [
+  { href: "/apoiar", label: "Apoiar", icon: Heart },
+  { href: "/sobre", label: "Sobre", icon: Info },
 ]
 
 export default function Sidebar() {
@@ -41,10 +45,34 @@ export default function Sidebar() {
             </Link>
           )
         })}
+        <div className="my-2 border-t" />
+        {extraLinks.map(({ href, label, icon: Icon }) => {
+          const isActive = pathname === href
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Icon className="size-5" />
+              {label}
+            </Link>
+          )
+        })}
       </nav>
 
       <div className="border-t p-4">
-        <ThemeToggle className="w-full cursor-pointer" />
+        <Link
+          href="/mais"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <Settings className="size-5" />
+          Configurações
+        </Link>
         <p className="mt-2 text-xs text-muted-foreground">
           Feito para corredores
         </p>

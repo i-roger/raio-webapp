@@ -10,7 +10,7 @@
 | Fontes | Inter (corpo) + Sora (títulos), via `next/font/google` |
 | Primitivas | @base-ui/react (substituto do Radix) |
 | Deploy | Vercel (com Analytics + SpeedInsights) |
-| Estado | React hooks locais (`useState`, `useEffect`) — sem estado global |
+| Estado | React hooks locais (`useState`, `useRef`, `useEffect`) — sem estado global |
 
 ## Estrutura de arquivos
 
@@ -18,7 +18,7 @@
 src/
 ├── app/
 │   ├── globals.css          # Tema light/dark, variáveis CSS, Tailwind
-│   ├── layout.tsx           # Root layout: Sidebar + MobileNav + ThemeToggle + font vars
+│   ├── layout.tsx           # Root layout: Sidebar + MobileNav + font vars
 │   ├── page.tsx             # Landing page (hero + vitrine de ferramentas)
 │   ├── calculadoras/
 │   │   ├── page.tsx                    # Hub: grid de 4 cards
@@ -33,10 +33,12 @@ src/
 ├── components/
 │   ├── layout/
 │   │   ├── Container.tsx       # Wrapper responsivo max-w-4xl
-│   │   ├── MobileNav.tsx       # Bottom tab bar (mobile only, md:hidden)
+│   │   ├── GlassContainer.tsx  # Efeito liquid glass (7 layers: edge reflection, emboss, refraction, blur, blend, highlight)
+│   │   ├── MobileNav.tsx       # Floating pill nav (mobile only) com drag-to-select + indicador animado
 │   │   └── Sidebar.tsx         # Sidebar fixa 240px (desktop only, hidden md:flex)
 │   ├── theme/
-│   │   └── ThemeToggle.tsx     # Botão dark/light com localStorage
+│   │   ├── ThemeSelect.tsx     # Dropdown Claro/Escuro com Check e outside-click-close
+│   │   └── index.ts
 │   ├── tools/
 │   │   ├── CalculatorLayout.tsx   # Card wrapper + "Voltar" + título
 │   │   ├── PaceInput.tsx          # Input mm:ss com formatação automática
@@ -58,6 +60,9 @@ src/
 | Rota | Tipo | Descrição |
 |---|---|---|
 | `/` | Server | Landing page: hero + seções de ferramentas |
+| `/mais` | Client | Menu de configurações: tema, apoio e sobre |
+| `/apoiar` | Client | Página de doação via Pix, com ← Voltar para /mais |
+| `/sobre` | Server | Sobre o aplicativo (versão, stack), com ← Voltar para /mais |
 | `/calculadoras` | Server | Hub com cards para 4 calculadoras |
 | `/calculadoras/pace-estimado` | Client | Calcula pace a partir de distância + tempo |
 | `/calculadoras/tempo-estimado` | Client | Calcula tempo a partir de distância + pace |
@@ -67,7 +72,7 @@ src/
 | `/conversoes/pace-para-kmh` | Client | Converte pace → km/h |
 | `/conversoes/kmh-para-pace` | Client | Converte km/h → pace |
 
-Todas as rotas são estáticas (prerendered as static content).
+Todas as rotas são estáticas (prerendered as static content), exceto `/mais` e `/apoiar` (usam `"use client"`).
 
 ## Tema (globals.css)
 
@@ -90,20 +95,54 @@ Todas as rotas são estáticas (prerendered as static content).
 ### Sidebar
 - `"use client"` — usa `usePathname()` para highlight da rota ativa
 - Escondida no mobile (`hidden md:flex`), 240px width, fixa à esquerda
-- 3 links: Início (`/`), Calculadoras (`/calculadoras`), Conversões (`/conversoes`)
-- Footer: ThemeToggle + "Feito para corredores"
+- 3 links principais: Início (`/`), Calculadoras (`/calculadoras`), Conversões (`/conversoes`)
+- 2 links extras separados por divisor: Apoiar (`/apoiar`), Sobre (`/sobre`)
+- Footer: "Configurações" (`/mais`) com ícone Settings + "Feito para corredores"
+- ThemeToggle removido da sidebar (tema agora em `/mais` via ThemeSelect)
 
 ### MobileNav
-- `"use client"` — `usePathname()` para highlight
-- Visible only on mobile (`md:hidden`), fixed bottom
-- 3 tabs com `flex-1` (1/3 da largura cada)
-- Ícones em container `size-6` para bounding box uniforme
-- Link ativo: `text-primary` + `scale-110` no ícone
+- `"use client"` — `usePathname()` + `useRouter()` para navegação
+- Visible only on mobile (`md:hidden`), fixed bottom, largura total com padding lateral
+- Floating pill: `inset-x-4 bottom-[max(20px,var(--safe-area-bottom))]`, envolta em `<GlassContainer>`
+- 4 tabs com `flex-1` (1/4 da largura cada): Início, Calculadoras, Conversões, Mais
+- Aba "Mais" (`/mais`) fica ativa também nas sub-rotas `/apoiar` e `/sobre`
+- Ícones apenas (sem labels), `size-8`, dentro de container `size-10`
+- Ícone ativo: `text-primary` + `scale-110`
+- iOS context menu longo bloqueado via `WebkitTouchCallout: 'none'` + `onContextMenu`
 
-### ThemeToggle
-- Lê `document.documentElement.classList.contains("dark")` no mount
-- Alterna classe + `localStorage.setItem("theme", "dark"|"light")`
-- Renderiza `Sun`/`Moon` + label "Modo claro" / "Modo escuro"
+#### Mecanismo de toque e arrasto (drag-to-select)
+- **`handleTouchStart`** — `e.preventDefault()`, ativa escala (`isScaling`), calcula tab sob o dedo via `getTabIndexFromX()` e posição contínua via `getIndicatorOffset()`, seta estado inicial
+- **`handleTouchMove`** — atualiza `pressedIndexRef` (ref, sempre atual) + `indicatorOffset` (seguindo o dedo), chama `setPressedIndex(index)` apenas quando a tab muda (minimiza re-renders)
+- **`handleTouchEnd`** — `setTransitionStyle('all 150ms ease-out')`, lê `pressedIndexRef.current` (nunca stale) e navega com `router.push()`. Se navegou, define `navigateToRef` e retorna cedo sem limpar estados — `useEffect([pathname])` limpa `pressedIndex`/`indicatorOffset` só após a nova rota renderizar
+- **`handlePointerUp`** — para desktop, filtra `e.pointerType === 'touch'` e navega baseado em `e.clientX`
+
+#### Indicador animado
+- Renderizado como `<div>` absoluto dentro do `<GlassContainer>`, `w-24 h-15 rounded-4xl bg-muted-foreground/15`
+- **Posição contínua** durante toque: `indicatorOffset` é a posição em % do dedo dentro da nav (0%–100%), sem arredondamento. Fora do toque: `displayIndex * 25 + 12.5%` (centro da tab ativa)
+- **Transição separada por estado**: `transitionStyle` é `'all 150ms ease-out'` inicialmente. No primeiro `touchMove` (`touchMovedRef`), vira `'none'` para seguimento fluido do dedo. Em `touchEnd`/`handleTouchCancel`/`useEffect` retorna a `'all 150ms ease-out'` para animação suave
+- Efeito: tap anima da tab atual até o dedo → drag segue sem lag → soltura anima da posição do dedo até o centro da nova tab
+
+#### Escala de feedback
+- `isScaling` alterna `scale-[.8]` ↔ `scale-[.9]` com `transition-transform duration-200`
+- Ativado em `handleTouchStart`, desativado em `handleTouchEnd`/`handleTouchCancel`
+- Sem `setTimeout` — escala reflete exclusivamente o toque do usuário
+
+#### Controle de navegação
+- **Tap** (<5px de movimento): `handleTouchEnd` navega para `pressedIndexRef.current` (tab sob o dedo). O indicador anima da posição do dedo até o centro da tab via `useEffect`
+- **Arrasto** (≥5px): `touchMovedRef` vira `transitionStyle` para `'none'`, indicador segue o dedo sem chasing stutter. `handleTouchEnd` navega para `pressedIndexRef.current` (onde o dedo soltou)
+- **Desktop**: `onPointerUp` com `pointerType !== 'touch'` — calcula tab via `getTabIndexFromX(e.clientX)` e navega
+- Sem handler `onClick` nos filhos — navegação é centralizada nos handlers do `<nav>`
+
+### ThemeSelect
+- Dropdown de seleção de tema (Claro / Escuro)
+- Ícone `SunMoon` + texto do tema atual (`Claro` / `Escuro`) + `ChevronDown`
+- Abre lista sobreposta com `Check` ao lado do tema ativo
+- Alterna classe `dark` no `<html>` + salva em `localStorage('theme')`
+- Fecha ao clicar fora (via `useEffect` com `click` listener no `document`)
+- Usado exclusivamente na página `/mais`
+
+### ThemeToggle (removido)
+- Era o botão flutuante com `Sun`/`Moon` — removido em favor do `ThemeSelect` em `/mais`
 
 ## Componentes de Ferramentas (tools)
 
@@ -181,6 +220,46 @@ export default function NomeDaFerramenta() {
 | `calculateAdjustedPace(paceSec, pct)` | `300, 85` | `"03:32"` |
 
 **Formato de distância**: em **metros** (10.000 = 10km). Input aceita inteiros com separador de milhar (ex: `10,000`). `parseDistance()` remove vírgulas e converte para número.
+
+## PWA & Safe Area
+
+O app é instalável como PWA (Add to Home Screen), com suporte parcial offline (sem service worker ainda).
+
+### Configuração PWA
+
+- **`src/app/manifest.ts`** — Gera `/manifest.json` com `display: "standalone"`, ícones 192×192 e 512×512, orientação portrait.
+- **`layout.tsx`** — Metadata inclui `manifest`, `apple-touch-icon` e `appleWebApp` para comportamento standalone no iOS.
+- **Ícones** — `icon-192x192.png`, `icon-512x512.png`, `apple-touch-icon.png` em `public/`.
+
+### Safe Area (`env(safe-area-inset-bottom)`)
+
+Dispositivos com notch/home indicator (iPhone X+, Android modernos) têm uma área segura no fundo da tela. Para evitar que o MobileNav e o conteúdo fiquem atrás dessa área:
+
+- **`globals.css`** — Define `--safe-area-bottom: env(safe-area-inset-bottom, 0px)`, que retorna `34px` no iPhone PWA, `24–48px` no Android, e `0px` em desktop.
+- **`MobileNav.tsx`** — `bottom-[max(20px,var(--safe-area-bottom))]` — padding dinâmico com mínimo de 20px.
+- **`layout.tsx`** — `pb-[calc(48px+max(20px,var(--safe-area-bottom)))]` no wrapper principal para que o conteúdo não fique oculto atrás do nav. O botão flutuante do tema foi removido — o tema agora é acessível via `/mais` (mobile) ou Sidebar (desktop).
+
+## Liquid Glass (glass.css)
+
+O efeito liquid glass é implementado no arquivo `src/app/glass.css` com multi-camadas de backdrop-filter:
+
+- **Edge reflection**: gradiente linear que simula reflexo de borda
+- **Emboss**: sombra interna para profundidade
+- **Refraction**: leve deslocamento de fundo (mock)
+- **Blur**: `blur(20px)` para o efeito vidro
+- **Blend layers**: sobreposição com `mix-blend-mode`
+- **Highlight**: brilho sutil no canto superior
+
+### Variáveis CSS personalizáveis
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| `cornerRadius` | `24px` | Raio da borda do vidro |
+| `baseStrength` | `0.15` | Opacidade da camada base |
+| `extraBlur` | `2px` | Blur extra na refração |
+| `softness` | `12` | Spread da sombra emboss |
+| `invert` | `0` | Inversão (1 para dark mode) |
+
+O componente `<GlassContainer>` em `src/components/layout/GlassContainer.tsx` aplica estas classes CSS com suporte a `className` e `children`.
 
 ## Observações
 

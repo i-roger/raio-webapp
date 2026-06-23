@@ -67,6 +67,7 @@ export default function Home() {
             <div className="mb-6 flex justify-center">
               <div className="flex size-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20">
                 <Zap className="size-8 text-primary-foreground" />
+                {/* <img src="favicon.ico"/> */}
               </div>
             </div>
             <h1 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">
