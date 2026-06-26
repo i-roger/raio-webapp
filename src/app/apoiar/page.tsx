@@ -8,18 +8,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { QrCode, CreditCard, CheckCircle2, XCircle } from "lucide-react"
 
+const STORAGE_KEY = "mp_pix_payment"
+
+const parseAmount = (val: string) => Number(val.replace(",", "."))
+
 export default function ApoiarPage() {
   const router = useRouter()
   const [amount, setAmount] = useState("")
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
-  const [method, setMethod] = useState<"pix" | "card">("pix")
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pixData, setPixData] = useState<{
     id: number
     qr_code_base64: string
     qr_code: string
+    expires_at: string
   } | null>(null)
   const [redirectStatus, setRedirectStatus] = useState<string | null>(null)
 
@@ -29,11 +34,26 @@ export default function ApoiarPage() {
     if (status) {
       setRedirectStatus(status)
       window.history.replaceState({}, "", "/apoiar")
+      return
+    }
+
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const data = JSON.parse(saved)
+        if (new Date(data.expires_at).getTime() > Date.now()) {
+          setPixData(data)
+        } else {
+          sessionStorage.removeItem(STORAGE_KEY)
+        }
+      }
+    } catch {
+      /* ignore */
     }
   }, [])
 
   const handlePixPayment = async () => {
-    if (!amount || Number(amount) < 1) {
+    if (!amount || parseAmount(amount) < 1) {
       setError("Selecione ou digite um valor válido (mínimo R$ 1)")
       return
     }
@@ -47,7 +67,7 @@ export default function ApoiarPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: Number(amount),
+          amount: parseAmount(amount),
           email: email || undefined,
           name: name || undefined,
         }),
@@ -59,11 +79,18 @@ export default function ApoiarPage() {
         throw new Error(data.error || "Erro ao gerar Pix")
       }
 
-      setPixData({
+      const pix = {
         id: data.id,
         qr_code_base64: data.qr_code_base64,
         qr_code: data.qr_code,
-      })
+        expires_at: data.expires_at,
+      }
+      setPixData(pix)
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(pix))
+      } catch {
+        /* ignore */
+      }
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -72,7 +99,7 @@ export default function ApoiarPage() {
   }
 
   const handleCardPayment = async () => {
-    if (!amount || Number(amount) < 1) {
+    if (!amount || parseAmount(amount) < 1) {
       setError("Selecione ou digite um valor válido (mínimo R$ 1)")
       return
     }
@@ -84,7 +111,7 @@ export default function ApoiarPage() {
       const res = await fetch("/api/checkout/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: Number(amount) }),
+        body: JSON.stringify({ amount: parseAmount(amount) }),
       })
 
       const data = await res.json()
@@ -147,6 +174,15 @@ export default function ApoiarPage() {
           qrCodeBase64={pixData.qr_code_base64}
           qrCodeText={pixData.qr_code}
           paymentId={pixData.id}
+          expiresAt={pixData.expires_at}
+          onExpired={() => {
+            sessionStorage.removeItem(STORAGE_KEY)
+            setPixData(null)
+          }}
+          onApproved={() => {
+            sessionStorage.removeItem(STORAGE_KEY)
+            setRedirectStatus("success")
+          }}
         />
       ) : (
         <div className="space-y-5">
@@ -185,38 +221,26 @@ export default function ApoiarPage() {
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant={method === "pix" ? "default" : "outline"}
-              onClick={() => setMethod("pix")}
-              className="flex-1"
-            >
-              <QrCode className="size-4" />
-              Pix
-            </Button>
-            <Button
-              variant={method === "card" ? "default" : "outline"}
-              onClick={() => setMethod("card")}
-              className="flex-1"
-            >
-              <CreditCard className="size-4" />
-              Cartão
-            </Button>
-          </div>
-
           {error && <p className="text-sm text-destructive">{error}</p>}
 
-          <Button
-            onClick={method === "pix" ? handlePixPayment : handleCardPayment}
-            className="w-full"
-            disabled={loading || !amount}
-          >
-            {loading
-              ? "Processando..."
-              : method === "pix"
-                ? "Pagar com Pix"
-                : "Pagar com Cartão"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={handlePixPayment}
+              className="flex-1"
+              disabled={loading || !amount}
+            >
+              <QrCode className="size-4" />
+              Pagar com Pix
+            </Button>
+            <Button
+              onClick={handleCardPayment}
+              className="flex-1"
+              disabled={loading || !amount}
+            >
+              <CreditCard className="size-4" />
+              Pagar com Cartão
+            </Button>
+          </div>
         </div>
       )}
     </CalculatorLayout>

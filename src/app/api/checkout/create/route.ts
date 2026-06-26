@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
             unit_price: Number(amount),
           },
         ],
-        purpose: "donations",
         back_urls: {
           success: `${baseUrl}/apoiar?status=success`,
           failure: `${baseUrl}/apoiar?status=failure`,

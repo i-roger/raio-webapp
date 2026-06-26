@@ -5,17 +5,29 @@ import { Loader2, CheckCircle2, XCircle, Clock } from "lucide-react"
 
 interface PaymentStatusProps {
   paymentId: number
+  expiresAt: string
+  onApproved?: () => void
 }
 
 type Status = "pending" | "approved" | "rejected" | "cancelled" | "checking"
 
-export default function PaymentStatus({ paymentId }: PaymentStatusProps) {
+export default function PaymentStatus({ paymentId, expiresAt, onApproved }: PaymentStatusProps) {
   const [status, setStatus] = useState<Status>("checking")
+
+  useEffect(() => {
+    if (status === "approved") {
+      onApproved?.()
+    }
+  }, [status, onApproved])
 
   useEffect(() => {
     let cancelled = false
 
+    const isExpired = () => new Date(expiresAt).getTime() <= Date.now()
+
     const checkPayment = async () => {
+      if (isExpired()) return
+
       try {
         const res = await fetch(`/api/payment/${paymentId}`)
         const data = await res.json()
@@ -33,15 +45,18 @@ export default function PaymentStatus({ paymentId }: PaymentStatusProps) {
         }
 
         setStatus("pending")
-        setTimeout(() => {
-          if (!cancelled) checkPayment()
-        }, 5000)
+
+        const nextCheck = () => {
+          if (!cancelled && !isExpired()) checkPayment()
+        }
+        setTimeout(nextCheck, 5000)
       } catch {
         if (!cancelled) {
           setStatus("pending")
-          setTimeout(() => {
-            if (!cancelled) checkPayment()
-          }, 5000)
+          const nextCheck = () => {
+            if (!cancelled && !isExpired()) checkPayment()
+          }
+          setTimeout(nextCheck, 5000)
         }
       }
     }
@@ -51,7 +66,7 @@ export default function PaymentStatus({ paymentId }: PaymentStatusProps) {
     return () => {
       cancelled = true
     }
-  }, [paymentId])
+  }, [paymentId, expiresAt])
 
   if (status === "approved") {
     return (

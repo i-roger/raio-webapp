@@ -61,7 +61,7 @@ src/
 |---|---|---|
 | `/` | Server | Landing page: hero + seções de ferramentas |
 | `/mais` | Client | Menu de configurações: tema, apoio e sobre |
-| `/apoiar` | Client | Página de doação via Pix, com ← Voltar para /mais |
+| `/apoiar` | Client | Página de doação (Pix inline + Cartão via Checkout Pro), com ← Voltar para /mais |
 | `/sobre` | Server | Sobre o aplicativo (versão, stack), com ← Voltar para /mais |
 | `/calculadoras` | Server | Hub com cards para 4 calculadoras |
 | `/calculadoras/pace-estimado` | Client | Calcula pace a partir de distância + tempo |
@@ -265,4 +265,121 @@ O componente `<GlassContainer>` em `src/components/layout/GlassContainer.tsx` ap
 
 - **shadcn v4 (base-nova)**: Usa `@base-ui/react` como primitiva, não Radix. A API de slots usa `data-slot` em vez de `asChild`.
 - **CSS variables**: O arquivo `globals.css` usa OKLCH para cores. `@theme inline` mapeia variáveis CSS para utilitários Tailwind. Novas cores devem seguir o mesmo padrão.
+
+## Mercado Pago (Pagamentos & Doações)
+
+### 1. Arquitetura Geral
+
+O sistema de pagamento usa a **API v3 do Mercado Pago** (SDK oficial `mercadopago`) com **dois fluxos independentes** que coexistem na página `/apoiar`:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  Página /apoiar                          │
+│                                                          │
+│  [Valor: R$ 4,90 │ R$ 14,90 │ R$ 19,90]                  │
+│  [E-mail (opcional)] [Nome (opcional)]                    │
+│                                                          │
+│  ┌──────────────┐  ┌──────────────────┐                  │
+│  │ Pagar com Pix │  │ Pagar com Cartão │                  │
+│  └──────┬───────┘  └────────┬─────────┘                  │
+│         │                    │                            │
+│         ▼                    ▼                            │
+│  ┌──────────────┐   ┌───────────────┐                    │
+│  │ PIX inline   │   │ Checkout Pro  │                    │
+│  │ QR + polling │   │ redirect MP   │                    │
+│  └──────────────┘   └───────────────┘                    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 2. Fluxo PIX (inline)
+
+Gera um QR Code Pix via API do Mercado Pago e mantém o usuário **dentro do app** com polling de confirmação.
+
+| Etapa | Descrição |
+|-------|-----------|
+| `POST /api/pix/create` | Cria pagamento Pix com `payment_method_id: "pix"` e expiração de **30 min** (`date_of_expiration`) |
+| Resposta | Retorna `id`, `qr_code_base64`, `qr_code`, `expires_at` |
+| Exibição | QR Code renderizado na tela + código Pix copiável |
+| Polling | `PaymentStatus` consulta `GET /api/payment/[id]` a cada **5s** |
+| Webhook | `POST /api/webhook` — Mercado Pago notifica backend, mas o fluxo principal é o polling |
+
+**Decisão de arquitetura:** optamos por **polling no frontend** em vez de depender apenas do webhook porque:
+- O webhook não tem garantia de entrega em tempo real
+- O polling permite feedback visual imediato para o usuário
+- O webhook fica como redundância/fallback
+
+#### Estados do PIX inline
+
+```
+QR gerado → Aguardando pagamento... → Pago! ✅
+                                    → Recusado ❌
+30 min sem pagamento → QR expirado → "Gerar novo QR"
+```
+
+#### Persistência (sessionStorage)
+- Ao gerar o QR, salvamos `{ id, qr_code, qr_code_base64, expires_at }` no `sessionStorage`
+- Se o usuário recarregar a página, o QR é restaurado (sem precisar gerar outro)
+- Ao expirar ou pagar, o `sessionStorage` é limpo
+
+#### UX do Cancelar
+- Botão "← Cancelar" no canto superior direito da tela do QR (vermelho, visível)
+- Usuário pode desistir ou alterar o valor a qualquer momento
+
+### 3. Fluxo Cartão (Checkout Pro)
+
+Redireciona o usuário para a **página hospedada do Mercado Pago**, que oferece Cartão de Crédito e Pix.
+
+| Etapa | Descrição |
+|-------|-----------|
+| `POST /api/checkout/create` | Cria uma `Preference` no Mercado Pago |
+| Body | `{ amount, items: [{ title: "Doação Raiolaranja" }] }` |
+| Resposta | `{ redirect_url: init_point, preference_id }` |
+| Ação | `window.location.href = data.redirect_url` (mesma aba — padrão de mercado) |
+| Retorno | Mercado Pago redireciona para `/apoiar?status=success\|failure\|pending` |
+
+**Decisão de arquitetura:** usamos `auto_return: "approved"` e `back_urls` configurados para que o usuário volte automaticamente ao app após o pagamento, com o resultado na URL.
+
+#### Tratamento do retorno
+
+```
+?status=success  → Tela: "Pagamento confirmado! ♥" + [Voltar ao início]
+?status=failure  → Tela: "Pagamento não concluído" + [Tentar novamente]
+?status=pending  → Tela: "Pagamento pendente" + [Tentar novamente]
+```
+
+### 4. Decisões Técnicas Relevantes
+
+| Decisão | Motivo |
+|---------|--------|
+| **Dois fluxos (PIX inline + Cartão redirect)** | PIX inline dá feedback imediato; cartão terceiriza a UI de pagamento para o MP |
+| **Polling de 5s no frontend** | Mais rápido que webhook para feedback visual ao usuário |
+| **sessionStorage (não localStorage)** | Dados sensíveis de pagamento não devem persistir após fechar a aba |
+| **Expiração de 30 min no PIX** | Padrão de mercado; evita QR "eterno" |
+| **Botão "Cancelar" em destaque** | Transparência com o usuário: ele pode desistir ou mudar o valor |
+| **Valores fixos (4,90 / 14,90 / 19,90)** | Simplicidade de UX; evita erros de digitação |
+| **Sem banco de dados** | Histórico de pagamentos fica no próprio dashboard do Mercado Pago |
+| **Validação do token na inicialização** | Erro claro se a variável de ambiente não estiver configurada |
+
+### 5. Componentes
+
+| Componente | Função |
+|---|---|
+| **`ValueSelector`** | Três botões de valor predefinido: R$ 4,90 / R$ 14,90 / R$ 19,90 |
+| **`PixQRCode`** | Exibe QR Code + contagem regressiva + "Cancelar" (botão destrutivo no topo) |
+| **`PaymentStatus`** | Polling de status a cada 5s; para ao expirar; chama `onApproved` |
+
+### 6. API Routes
+
+| Rota | Método | Função |
+|------|--------|--------|
+| `/api/pix/create` | POST | Cria pagamento Pix com expiração de 30 min |
+| `/api/checkout/create` | POST | Cria preferência Checkout Pro e retorna URL de redirect |
+| `/api/payment/[id]` | GET | Consulta status de um pagamento |
+| `/api/webhook` | POST | Recebe notificações do Mercado Pago |
+
+### 7. Credenciais
+
+- `MERCADO_PAGO_ACCESS_TOKEN` — token de produção (`APP_USR-...`) configurado na Vercel
+- Para desenvolvimento local: usar token de teste (`TEST-...`)
+- Validação em `src/lib/mercadopago.ts` lança erro claro se o token estiver ausente
 
